@@ -24,6 +24,7 @@ public class Utilities {
     
     private static boolean Blank = true;
     private static int Change = 0;
+    private final static String msjError = "Oe compa, ya existe ese valor en: la fila %d y la columna %d";
     
     public static BufferedReader getBuffered(String link) {
 
@@ -87,57 +88,62 @@ public class Utilities {
         String value = String.valueOf(datosSoudoku.getJSONArray(i).getInt(j));
         value = value.trim().equals("0") ? "" : value.trim();
         input.setEditable(value == "");
-        if(!value.equals("")){
-            input.setFont(new java.awt.Font("Arial Narrow", 1, 16));
-        }else{
-            if(value.equals("5")){
-                input.setForeground(new java.awt.Color(0, 163, 0));
-            }else{
-                input.setForeground(Color.red);
-            }
-        }
-
+        input.setFont(new java.awt.Font("Arial Narrow", 1, 16));
+        
+        if(value.equals(""))
+            input.setForeground(new java.awt.Color(0, 163, 0));
+        
         input.setText(value);
         return input;
     }
     
-    public static void ValidTable(java.awt.event.KeyEvent evt, SudokuStructure st, SudokuStructure[][] MatrizSudoku, JRootPane rootPane) {
-        ValidColumn(evt, st, MatrizSudoku, rootPane);
-        ValidRow(evt, st, MatrizSudoku, rootPane);
-        ValidSubMatrix(evt, st, MatrizSudoku, rootPane);
+    public static void ValidTable(SudokuStructure st, SudokuStructure[][] MatrizSudoku, JRootPane rootPane) {
+        boolean c = ValidColumn(st, MatrizSudoku, rootPane);
+        boolean r = ValidRow(st, MatrizSudoku, rootPane);
+        boolean m = ValidSubMatrix(st, MatrizSudoku, rootPane);
+        if(!c || !r || !m){
+            if(!st.Default)
+                st.Input.setForeground(Color.red);
+        }
     }
     
-    private static void ValidColumn(java.awt.event.KeyEvent evt, SudokuStructure st, SudokuStructure[][] MatrizSudoku, JRootPane rootPane) {
+    private static boolean ValidColumn(SudokuStructure st, SudokuStructure[][] MatrizSudoku, JRootPane rootPane) {
+        boolean resultado = true;
         int column = st.Coordinate.y;
         for (int i = 0; i < MatrizSudoku.length; i++) {
             if(i != st.Coordinate.x && !st.Input.getText().equals("")){
                 if(st.Input.getText().equals(MatrizSudoku[i][column].Input.getText())){
-                    JOptionPane.showMessageDialog(rootPane, "Oe compa ya existe ese valor en: " + i + "" + column);
+                    JOptionPane.showMessageDialog(rootPane, String.format(msjError, i+1, column+1));
+                    resultado = false;
                 }
             }
         }
+        return resultado;
     }
     
-    private static void ValidRow(java.awt.event.KeyEvent evt, SudokuStructure st, SudokuStructure[][] MatrizSudoku, JRootPane rootPane) {
+    private static boolean ValidRow(SudokuStructure st, SudokuStructure[][] MatrizSudoku, JRootPane rootPane) {
+        boolean resultado = true;
         int row = st.Coordinate.x;
         for (int j = 0; j < MatrizSudoku[0].length; j++) {
             if(j != st.Coordinate.y && !st.Input.getText().equals("")){
                 if(st.Input.getText().equals(MatrizSudoku[row][j].Input.getText())){
-                    JOptionPane.showMessageDialog(rootPane, "Oe compa ya existe ese valor en: " + row + "" + j);
+                    JOptionPane.showMessageDialog(rootPane, String.format(msjError, row+1, j+1));
+                    resultado = false;
                 }
             }
         }
+        return resultado;
     }
     
     
-    private static boolean ValidSubMatrix(java.awt.event.KeyEvent evt, SudokuStructure st, SudokuStructure[][] MatrizSudoku, JRootPane rootPane) {
+    private static boolean ValidSubMatrix(SudokuStructure st, SudokuStructure[][] MatrizSudoku, JRootPane rootPane) {
         String valor = st.Input.getText();
         
         int minimo_fila = st.Coordinate.x;
         int maximo_fila = st.Coordinate.x;
         int minimo_columna = st.Coordinate.y;
         int maximo_columna = st.Coordinate.y;
-        boolean resultado = false;
+        boolean resultado = true;
                 
         int mod = (st.Coordinate.x) % 3;
         
@@ -152,9 +158,11 @@ public class Utilities {
         for (int i = minimo_fila; i <= maximo_fila; i++) {
             for (int j = minimo_columna; j <= maximo_columna; j++) {
                 if (i != st.Coordinate.x && j != st.Coordinate.y && !valor.equals("")) {
-                    resultado = MatrizSudoku[i][j].Input.getText().equals(valor);
-                    if (resultado){
-                        JOptionPane.showMessageDialog(rootPane, "Oe compa ya existe ese valor en: " + i + "" + j);
+                    boolean search = MatrizSudoku[i][j].Input.getText().equals(valor); 
+                    if (search){
+                        JOptionPane.showMessageDialog(rootPane, String.format(msjError, i+1, j+1));
+                        if(resultado)
+                            resultado = false;
                         break;
                     }
                 }

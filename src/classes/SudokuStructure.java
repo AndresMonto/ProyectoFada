@@ -15,10 +15,12 @@ public class SudokuStructure {
     
     public JTextField Input;
     public Point Coordinate;
+    public boolean Default;
 
-    public SudokuStructure(JTextField Input, Point Coordinate) {
+    public SudokuStructure(JTextField Input, Point Coordinate, boolean Default) {
         this.Input = Input;
         this.Coordinate = Coordinate;
+        this.Default = Default;
     }
     
 }

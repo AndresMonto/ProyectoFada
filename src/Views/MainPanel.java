@@ -8,6 +8,7 @@ import classes.SudokuStructure;
 import static classes.Utilities.ReadJSON;
 import static classes.Utilities.ValidTable;
 import static classes.Utilities.CreateTextField;
+import java.awt.Color;
 import java.awt.Point;
 import javax.swing.JTextField;
 import org.json.JSONArray;
@@ -36,9 +37,8 @@ public class MainPanel extends javax.swing.JFrame {
         for (int i = 0; i < datosSoudoku.length(); i++) {
             for (int j = 0; j < datosSoudoku.getJSONArray(0).length(); j++) {
                 JTextField input = CreateTextField(datosSoudoku, i, j);
-                
                 jPanel2.add(input); 
-                MatrizSudoku[i][j] = new SudokuStructure(input, new Point(i, j));
+                MatrizSudoku[i][j] = new SudokuStructure(input, new Point(i, j), !input.getText().equals(""));
                 addActionToTextField(MatrizSudoku[i][j]);
             }
         }
@@ -47,13 +47,14 @@ public class MainPanel extends javax.swing.JFrame {
     public void addActionToTextField(SudokuStructure st){
         st.Input.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                JTextKeyReleased(evt, st);
+                JTextKeyReleased(st);
             }
         });;
     }
     
-    private void JTextKeyReleased(java.awt.event.KeyEvent evt, SudokuStructure st) {                                        
-        ValidTable(evt, st, MatrizSudoku, rootPane);
+    private void JTextKeyReleased(SudokuStructure st) { 
+        st.Input.setForeground(new java.awt.Color(0, 163, 0));
+        ValidTable(st, MatrizSudoku, rootPane);
     }
      
 
@@ -242,10 +243,16 @@ public class MainPanel extends javax.swing.JFrame {
 
     private void jButton4ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton4ActionPerformed
         // TODO add your handling code here:
+        for (int i = 0; i < MatrizSudoku.length; i++) {
+            for (int j = 0; j < MatrizSudoku[0].length; j++) {
+                ValidTable(MatrizSudoku[i][j], MatrizSudoku, rootPane);
+            }
+        }
     }//GEN-LAST:event_jButton4ActionPerformed
 
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
+        //cargarMAtriz();
     }//GEN-LAST:event_jButton5ActionPerformed
 
     /**
