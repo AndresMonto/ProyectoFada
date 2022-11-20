@@ -25,3 +25,8 @@ hs_err_pid*
 /dist/
 /build/built-jar.properties
 /nbproject/private/
+/build/classes/.netbeans_automatic_build
+/build/classes/.netbeans_update_resources
+/build/classes/sudoku/Ingreso.form
+/build/classes/sudoku/Portada.form
+/build/classes/sudoku/Tablero.form
