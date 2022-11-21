@@ -4,13 +4,19 @@
  */
 package classes;
 
+import Classes.Move;
+import Classes.Validations;
 import java.awt.Color;
+import java.awt.Point;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 import javax.swing.JRootPane;
+import javax.swing.JTextArea;
 import javax.swing.JTextField;
 import static javax.swing.SwingConstants.CENTER;
 import org.json.JSONArray;
@@ -24,9 +30,16 @@ public class Utilities {
     
     private static boolean Blank = true;
     private static int Change = 0;
-    private final static String msjError = "Oe compa, ya existe ese valor en: la fila %d y la columna %d";
     
-    public static BufferedReader getBuffered(String link) {
+    protected static SudokuStructure[][]  MatrizSudoku = new  SudokuStructure[9][9];
+    private static ArrayList<Move>  Moves = new ArrayList<>();
+
+    protected static int Play = 0;
+    private static int Table = 0;
+    
+    private final static String msjHistory = "Valor %d ubicado en la fila %d y en la columna %d";
+    
+    private static BufferedReader getBuffered(String link) {
 
         FileReader lector = null;
         BufferedReader br = null;
@@ -44,12 +57,12 @@ public class Utilities {
         return br;
     }
     
-    public static JSONArray ReadJSON () {
+    private static JSONArray ReadJSON(boolean resolved) {
         
         String cadenaJson = "";
     
         try{
-            String ruta = "src\\logica\\data.json";
+            String ruta = "src\\Resource\\data.json";
             BufferedReader br = getBuffered(ruta);
             String linea = br.readLine();
             int contador = 0;
@@ -62,10 +75,70 @@ public class Utilities {
         
         JSONObject objetoJson = new JSONObject(cadenaJson);
         JSONArray datosSoudoku = objetoJson.getJSONArray("data");
+        datosSoudoku = datosSoudoku.getJSONArray(Table).getJSONArray(resolved ? 1 : 0 );
         return datosSoudoku;
     }
     
-    public static JTextField CreateTextField(JSONArray datosSoudoku, int i, int j) {
+    
+    public static void ChargeMatrix(JPanel jPanel2, JTextArea textA, JRootPane rootPane, int table, boolean resolved) {
+        Table = table;
+        JSONArray datosSoudoku =  ReadJSON(resolved);
+        
+        for (int i = 0; i < datosSoudoku.length(); i++) {
+            for (int j = 0; j < datosSoudoku.getJSONArray(0).length(); j++) {
+                JTextField input = CreateTextField(datosSoudoku, i, j);
+                jPanel2.add(input); 
+                MatrizSudoku[i][j] = new SudokuStructure(input, input.getText(), new Point(i, j), !input.getText().equals(""));
+                AddActionToTextField(MatrizSudoku[i][j], textA, rootPane);
+            }
+        }
+    }
+    
+    private static void AddActionToTextField(SudokuStructure st, JTextArea textA, JRootPane rootPane){
+        st.Input.addKeyListener(new java.awt.event.KeyAdapter() {
+            public void keyReleased(java.awt.event.KeyEvent evt) {
+                JTextKeyReleased(st, textA, rootPane);
+            }
+        });
+    }
+    
+    private static void JTextKeyReleased(SudokuStructure st, JTextArea textA, JRootPane rootPane) {
+       try {
+           int value = Integer.parseInt( st.Input.getText());
+           if(value >= 0 && value <= 9){
+               if(!st.Default)
+                   st.Input.setForeground(new java.awt.Color(0, 163, 0));
+               Validations.ValidTable(st, rootPane);
+               AddPlay(st);
+               AddHistory(textA, String.format(msjHistory, value, st.Coordinate.x+1, st.Coordinate.y+1));
+           }else{
+               st.Input.setText("");
+           }
+       } catch (Exception e) {
+           st.Input.setText("");
+       }
+        
+    }
+    
+    private static void AddPlay(SudokuStructure st) {
+        Moves.add(new Move(st.PrevValue, new Point(st.Coordinate.x, st.Coordinate.y)));
+        if(Moves.size() > 1)
+            Play++;
+        MatrizSudoku[st.Coordinate.x][st.Coordinate.y].PrevValue = st.Input.getText();
+        
+    }
+    
+    public static void MoveForward() {
+        Play += Play < (Moves.size()-0) ? 1 : 0;
+        ResetValues();
+    }
+    
+    public static void MoveBack() {
+        Play -= Play > 0 ? 1 : 0;
+        ResetValues();
+    }
+    
+    private static JTextField CreateTextField(JSONArray datosSoudoku, int i, int j) {
         
         JTextField input = new JTextField();
         input.setName("id"+i+""+j);
@@ -97,77 +170,40 @@ public class Utilities {
         return input;
     }
     
-    public static void ValidTable(SudokuStructure st, SudokuStructure[][] MatrizSudoku, JRootPane rootPane) {
-        boolean c = ValidColumn(st, MatrizSudoku, rootPane);
-        boolean r = ValidRow(st, MatrizSudoku, rootPane);
-        boolean m = ValidSubMatrix(st, MatrizSudoku, rootPane);
-        if(!c || !r || !m){
-            if(!st.Default)
-                st.Input.setForeground(Color.red);
-        }
-    }
     
-    private static boolean ValidColumn(SudokuStructure st, SudokuStructure[][] MatrizSudoku, JRootPane rootPane) {
-        boolean resultado = true;
-        int column = st.Coordinate.y;
-        for (int i = 0; i < MatrizSudoku.length; i++) {
-            if(i != st.Coordinate.x && !st.Input.getText().equals("")){
-                if(st.Input.getText().equals(MatrizSudoku[i][column].Input.getText())){
-                    JOptionPane.showMessageDialog(rootPane, String.format(msjError, i+1, column+1));
-                    resultado = false;
-                }
-            }
-        }
-        return resultado;
-    }
-    
-    private static boolean ValidRow(SudokuStructure st, SudokuStructure[][] MatrizSudoku, JRootPane rootPane) {
-        boolean resultado = true;
-        int row = st.Coordinate.x;
-        for (int j = 0; j < MatrizSudoku[0].length; j++) {
-            if(j != st.Coordinate.y && !st.Input.getText().equals("")){
-                if(st.Input.getText().equals(MatrizSudoku[row][j].Input.getText())){
-                    JOptionPane.showMessageDialog(rootPane, String.format(msjError, row+1, j+1));
-                    resultado = false;
-                }
-            }
-        }
-        return resultado;
-    }
-    
-    
-    private static boolean ValidSubMatrix(SudokuStructure st, SudokuStructure[][] MatrizSudoku, JRootPane rootPane) {
-        String valor = st.Input.getText();
-        
-        int minimo_fila = st.Coordinate.x;
-        int maximo_fila = st.Coordinate.x;
-        int minimo_columna = st.Coordinate.y;
-        int maximo_columna = st.Coordinate.y;
-        boolean resultado = true;
-                
-        int mod = (st.Coordinate.x) % 3;
-        
-        minimo_fila -= mod;
-        maximo_fila += (mod == 0) ? 2 : (mod == 1) ? mod : 0;
-        
-        mod = (st.Coordinate.y) % 3;
-        
-        minimo_columna -= mod;
-        maximo_columna += (mod == 0) ? 2 : (mod == 1) ? mod : 0;
+    public static void ResetValues(boolean resolved) {
 
-        for (int i = minimo_fila; i <= maximo_fila; i++) {
-            for (int j = minimo_columna; j <= maximo_columna; j++) {
-                if (i != st.Coordinate.x && j != st.Coordinate.y && !valor.equals("")) {
-                    boolean search = MatrizSudoku[i][j].Input.getText().equals(valor); 
-                    if (search){
-                        JOptionPane.showMessageDialog(rootPane, String.format(msjError, i+1, j+1));
-                        if(resultado)
-                            resultado = false;
-                        break;
-                    }
-                }
+        JSONArray datosSoudoku =  ReadJSON(resolved);
+        
+        for (int i = 0; i < datosSoudoku.length(); i++) {
+            for (int j = 0; j < datosSoudoku.getJSONArray(0).length(); j++) {
+                String value = String.valueOf(datosSoudoku.getJSONArray(i).getInt(j));
+                value = value.trim().equals("0") ? "" : value.trim();
+                MatrizSudoku[i][j].Input.setText(value);
             }
         }
-        return resultado;
+
+    }
+    public static void ResetValues() {
+        if(Moves.size() > 0){
+            Move m = Moves.get(Play);
+            MatrizSudoku[m.Coordenate.x][m.Coordenate.y].Input.setText(m.Value);
+        }
+    }
+    
+    public static void AddHistory(JTextArea textA,String msj) {
+        if(!msj.equals(""))
+            textA.append(msj + "\n");
+        else
+            textA.setText(msj);   
+    }
+   
+    
+    protected static void ShowErrorMassage(JRootPane rootPane, SudokuStructure st, String[] msj, Point location, int type) {
+        JOptionPane.showMessageDialog(rootPane, String.format(msj[0], st.Input.getText(), st.Coordinate.x+1, st.Coordinate.y+1, location.x, location.y), msj[1],type);
+    }
+    
+    protected static void ShowGeneralMassage(JRootPane rootPane, String[] msj, int type) {
+        JOptionPane.showMessageDialog(rootPane, msj[0] , msj[1],type);
     }
 }

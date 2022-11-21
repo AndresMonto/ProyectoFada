@@ -14,11 +14,13 @@ import javax.swing.JTextField;
 public class SudokuStructure {
     
     public JTextField Input;
+    public String PrevValue;
     public Point Coordinate;
     public boolean Default;
 
-    public SudokuStructure(JTextField Input, Point Coordinate, boolean Default) {
+    public SudokuStructure(JTextField Input,String PrevValue, Point Coordinate, boolean Default) {
         this.Input = Input;
+        this.PrevValue = PrevValue;
         this.Coordinate = Coordinate;
         this.Default = Default;
     }
