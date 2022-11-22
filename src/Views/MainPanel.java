@@ -9,9 +9,8 @@ import static classes.Utilities.ChargeMatrix;
 import static classes.Utilities.AddHistory;
 import static classes.Utilities.MoveForward;
 import static classes.Utilities.MoveBack;
-import javax.swing.JOptionPane;
 import static classes.Utilities.ResetValues;
-import static classes.Utilities.ResetValues;
+import static classes.Utilities.GetClue;
 
 /**
  *
@@ -367,6 +366,7 @@ public class MainPanel extends javax.swing.JFrame {
     private void jButton2ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton2ActionPerformed
         // TODO add your handling code here:
         AddHistory(jTextArea1, "Selección de Pista");
+        GetClue();
     }//GEN-LAST:event_jButton2ActionPerformed
 
     private void jButton3ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton3ActionPerformed

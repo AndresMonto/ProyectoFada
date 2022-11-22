@@ -39,6 +39,8 @@ public class Utilities {
     private static int Table = 0;
     
     private final static String msjHistory = "Valor %d ubicado en la fila %d y en la columna %d";
+    private final static String msjClueTitle = "Ahí le va un consejo ;)";
+    private final static String msjClue = "En la fila %d y en la columna %d podrías ingresar el valor %s";
     
     private static BufferedReader getBuffered(String link) {
 
@@ -202,6 +204,21 @@ public class Utilities {
         if(Moves.size() > 0){
             Move m = Moves.get(Play);
             MatrizSudoku[m.Coordenate.x][m.Coordenate.y].Input.setText(m.Value);
+        }
+    }
+    
+    public static void GetClue() {
+        boolean given = false;
+        for (int i = 0; i < MatrizSudoku.length && !given; i++) {
+            for (int j = 0; j < MatrizSudoku[0].length && !given; j++) {
+                SudokuStructure obj = MatrizSudoku[i][j];
+                String value = obj.Input.getText();
+                if(value.equals("")){
+                    JSONArray datosSoudoku = ReadJSON(true);
+                    ShowGeneralMassage(null, new String[]{String.format(msjClue, obj.Coordinate.x+1 , obj.Coordinate.y+1, datosSoudoku.getJSONArray(i).getInt(j) ),msjClueTitle}, JOptionPane.INFORMATION_MESSAGE);
+                    given = true;
+                }
+            }
         }
     }
     
