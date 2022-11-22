@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
+import javax.swing.JButton;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
@@ -58,7 +59,6 @@ public class Utilities {
     }
     
     private static JSONArray ReadJSON(boolean resolved) {
-        
         String cadenaJson = "";
     
         try{
@@ -170,7 +170,6 @@ public class Utilities {
         return input;
     }
     
-    
     public static void ResetValues(boolean resolved) {
 
         JSONArray datosSoudoku =  ReadJSON(resolved);
@@ -180,10 +179,25 @@ public class Utilities {
                 String value = String.valueOf(datosSoudoku.getJSONArray(i).getInt(j));
                 value = value.trim().equals("0") ? "" : value.trim();
                 MatrizSudoku[i][j].Input.setText(value);
+                MatrizSudoku[i][j].Default = !value.equals("");
+                
+                MatrizSudoku[i][j].Input.setEditable(value == "");
+
+                if(value.equals(""))
+                    MatrizSudoku[i][j].Input.setForeground(new java.awt.Color(0, 163, 0));
+                else
+                    MatrizSudoku[i][j].Input.setForeground(Color.black);
             }
         }
 
     }
+    
+    public static void ResetValues(JButton jb) {
+        Table = Table == 0 ? 1 : 0;
+        jb.setText("🐍 Cambiar de Tablero " + (Table == 0 ? "Difícil" : "Fácil"));
+        ResetValues(false);
+    }
+    
     public static void ResetValues() {
         if(Moves.size() > 0){
             Move m = Moves.get(Play);
