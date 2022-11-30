@@ -31,3 +31,5 @@ hs_err_pid*
 /build/classes/sudoku/Portada.form
 /build/classes/sudoku/Tablero.form
 /nbproject/private/private.xml
+/target/maven-archiver/pom.properties
+/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/inputFiles.lst
