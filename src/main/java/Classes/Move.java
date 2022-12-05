@@ -12,11 +12,11 @@ import java.awt.Point;
  */
 public class Move {
     
-    public String Value;
-    public Point Coordenate;
+    public String value;
+    public Point coordenate;
 
-    public Move(String Value, Point Coordenate) {
-        this.Value = Value;
-        this.Coordenate = Coordenate;
+    public Move(String value, Point coordenate) {
+        this.value = value;
+        this.coordenate = coordenate;
     }
 }

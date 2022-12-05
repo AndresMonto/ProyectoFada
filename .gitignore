@@ -36,3 +36,4 @@ hs_err_pid*
 /nbproject/
 /target/surefire-reports/ValidationsTest.txt
 /target/surefire-reports/TEST-ValidationsTest.xml
+/target/maven-status/maven-compiler-plugin/testCompile/default-testCompile/createdFiles.lst

@@ -29,20 +29,21 @@ import org.json.JSONObject;
  */
 public class Utilities {
     
-    private static boolean Blank = true;
-    private static int Change = 0;
+    private static boolean blank = true;
+    private static int change = 0;
     
-    protected static SudokuStructure[][]  MatrizSudoku = new  SudokuStructure[9][9];
-    private static ArrayList<Move>  Moves = new ArrayList<>();
+    protected static SudokuStructure[][]  matrizSudoku = new  SudokuStructure[9][9];
+    private static ArrayList<Move> moves = new ArrayList<>();
 
-    protected static int Play = 0;
-    private static int Table = 0;
+    protected static int play = 0;
+    private static int table = 0;
     
     private final static String msjHistory = "Valor %d ubicado en la fila %d y en la columna %d";
     private final static String msjClueTitle = "Ahí le va un consejo ;)";
     private final static String msjClue = "En la fila %d y en la columna %d podrías ingresar el valor %s";
+    private final static String msjEnding = "Puntaje: 1 \nTiempo: 1";
     
-    private static BufferedReader getBuffered(String link) {
+    public static BufferedReader getBuffered(String link) {
 
         FileReader lector = null;
         BufferedReader br = null;
@@ -60,7 +61,7 @@ public class Utilities {
         return br;
     }
     
-    private static JSONArray ReadJSON(boolean resolved) {
+    private static JSONArray readJSON(boolean resolved) {
         String cadenaJson = "";
     
         try{
@@ -77,69 +78,69 @@ public class Utilities {
         
         JSONObject objetoJson = new JSONObject(cadenaJson);
         JSONArray datosSoudoku = objetoJson.getJSONArray("data");
-        datosSoudoku = datosSoudoku.getJSONArray(Table).getJSONArray(resolved ? 1 : 0 );
+        datosSoudoku = datosSoudoku.getJSONArray(table).getJSONArray(resolved ? 1 : 0 );
         return datosSoudoku;
     }
     
     
-    public static void ChargeMatrix(JPanel jPanel2, JTextArea textA, JRootPane rootPane, int table, boolean resolved) {
-        Table = table;
-        JSONArray datosSoudoku =  ReadJSON(resolved);
+    public static void chargeMatrix(JPanel jPanel2, JTextArea textA, JRootPane rootPane, int table, boolean resolved) {
+        table = table;
+        JSONArray datosSoudoku =  readJSON(resolved);
         
         for (int i = 0; i < datosSoudoku.length(); i++) {
             for (int j = 0; j < datosSoudoku.getJSONArray(0).length(); j++) {
-                JTextField input = CreateTextField(datosSoudoku, i, j);
+                JTextField input = createTextField(datosSoudoku, i, j);
                 jPanel2.add(input); 
-                MatrizSudoku[i][j] = new SudokuStructure(input, input.getText(), new Point(i, j), !input.getText().equals(""));
-                AddActionToTextField(MatrizSudoku[i][j], textA, rootPane);
+                matrizSudoku[i][j] = new SudokuStructure(input, input.getText(), new Point(i, j), !input.getText().equals(""));
+                addActionToTextField(matrizSudoku[i][j], textA, rootPane);
             }
         }
     }
     
-    private static void AddActionToTextField(SudokuStructure st, JTextArea textA, JRootPane rootPane){
-        st.Input.addKeyListener(new java.awt.event.KeyAdapter() {
+    private static void addActionToTextField(SudokuStructure st, JTextArea textA, JRootPane rootPane){
+        st.input.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                JTextKeyReleased(st, textA, rootPane);
+                jTextKeyReleased(st, textA, rootPane);
             }
         });
     }
     
-    private static void JTextKeyReleased(SudokuStructure st, JTextArea textA, JRootPane rootPane) {
+    private static void jTextKeyReleased(SudokuStructure st, JTextArea textA, JRootPane rootPane) {
        try {
-           int value = Integer.parseInt( st.Input.getText());
+           int value = Integer.parseInt( st.input.getText());
            if(value >= 1 && value <= 9){
-               if(!st.Default)
-                   st.Input.setForeground(new java.awt.Color(0, 163, 0));
-               Validations.ValidTable(st, rootPane);
-               AddPlay(st);
-               AddHistory(textA, String.format(msjHistory, value, st.Coordinate.x+1, st.Coordinate.y+1));
+               if(!st.defaultValue)
+                   st.input.setForeground(new java.awt.Color(0, 163, 0));
+               Validations.validTable(st, rootPane);
+               addPlayToMoves(st);
+               addHistory(textA, String.format(msjHistory, value, st.coordinate.x+1, st.coordinate.y+1));
            }else{
-               st.Input.setText("");
+               st.input.setText("");
            }
        } catch (Exception e) {
-           st.Input.setText("");
+           st.input.setText("");
        }
         
     }
     
-    private static void AddPlay(SudokuStructure st) {
-        Moves.add(new Move(st.PrevValue, new Point(st.Coordinate.x, st.Coordinate.y)));
-        if(Moves.size() > 1)
-            Play++;
-        MatrizSudoku[st.Coordinate.x][st.Coordinate.y].PrevValue = st.Input.getText();
+    private static void addPlayToMoves(SudokuStructure st) {
+        moves.add(new Move(st.prevValue, new Point(st.coordinate.x, st.coordinate.y)));
+        if(moves.size() > 1)
+            play++;
+        matrizSudoku[st.coordinate.x][st.coordinate.y].prevValue = st.input.getText();
     }
     
-    public static void MoveForward() {
-        Play += Play < (Moves.size()-0) ? 1 : 0;
-        ResetValues();
+    public static void moveForward() {
+        play += play < (moves.size()-0) ? 1 : 0;
+        resetValues();
     }
     
-    public static void MoveBack() {
-        ResetValues();
-        Play -= Play > 0 ? 1 : 0;
+    public static void moveBack() {
+        resetValues();
+        play -= play > 0 ? 1 : 0;
     }
     
-    private static JTextField CreateTextField(JSONArray datosSoudoku, int i, int j) {
+    private static JTextField createTextField(JSONArray datosSoudoku, int i, int j) {
         
         JTextField input = new JTextField();
         input.setName("id"+i+""+j);
@@ -149,14 +150,14 @@ public class Utilities {
         input.setBorder(javax.swing.BorderFactory.createLineBorder(new java.awt.Color(0, 0, 0), 1));
 
         if(j % 3 == 0){
-            if(Change % 3 != 0)
-                Blank = !Blank;
+            if(change % 3 != 0)
+                blank = !blank;
             if(j == 0 && i % 3 == 0)
-                Blank = !Blank;
-            Change++;
+                blank = !blank;
+            change++;
         }
 
-        if(!Blank)
+        if(!blank)
             input.setBackground(Color.lightGray);
 
         String value = String.valueOf(datosSoudoku.getJSONArray(i).getInt(j));
@@ -171,57 +172,57 @@ public class Utilities {
         return input;
     }
     
-    public static void ResetValues(boolean resolved) {
+    public static void resetValues(boolean resolved) {
 
-        JSONArray datosSoudoku =  ReadJSON(resolved);
+        JSONArray datosSoudoku =  readJSON(resolved);
         
         for (int i = 0; i < datosSoudoku.length(); i++) {
             for (int j = 0; j < datosSoudoku.getJSONArray(0).length(); j++) {
                 String value = String.valueOf(datosSoudoku.getJSONArray(i).getInt(j));
                 value = value.trim().equals("0") ? "" : value.trim();
-                MatrizSudoku[i][j].Input.setText(value);
-                MatrizSudoku[i][j].Default = !value.equals("");
+                matrizSudoku[i][j].input.setText(value);
+                matrizSudoku[i][j].defaultValue = !value.equals("");
                 
-                MatrizSudoku[i][j].Input.setEditable(value == "");
+                matrizSudoku[i][j].input.setEditable(value == "");
 
                 if(value.equals(""))
-                    MatrizSudoku[i][j].Input.setForeground(new java.awt.Color(0, 163, 0));
+                    matrizSudoku[i][j].input.setForeground(new java.awt.Color(0, 163, 0));
                 else
-                    MatrizSudoku[i][j].Input.setForeground(Color.black);
+                    matrizSudoku[i][j].input.setForeground(Color.black);
             }
         }
 
     }
     
-    public static void ResetValues(JButton jb) {
-        Table = Table == 0 ? 1 : 0;
-        jb.setText("🐍 Cambiar de Tablero " + (Table == 0 ? "Difícil" : "Fácil"));
-        ResetValues(false);
+    public static void resetValues(JButton jb) {
+        table = table == 0 ? 1 : 0;
+        jb.setText("🐍 Cambiar de Tablero " + (table == 0 ? "Difícil" : "Fácil"));
+        resetValues(false);
     }
     
-    public static void ResetValues() {
-        if(Moves.size() > 0){
-            Move m = Moves.get(Play);
-            MatrizSudoku[m.Coordenate.x][m.Coordenate.y].Input.setText(m.Value);
+    public static void resetValues() {
+        if(moves.size() > 0){
+            Move m = moves.get(play);
+            matrizSudoku[m.coordenate.x][m.coordenate.y].input.setText(m.value);
         }
     }
     
-    public static void GetClue() {
+    public static void getClue() {
         boolean given = false;
-        for (int i = 0; i < MatrizSudoku.length && !given; i++) {
-            for (int j = 0; j < MatrizSudoku[0].length && !given; j++) {
-                SudokuStructure obj = MatrizSudoku[i][j];
-                String value = obj.Input.getText();
+        for (int i = 0; i < matrizSudoku.length && !given; i++) {
+            for (int j = 0; j < matrizSudoku[0].length && !given; j++) {
+                SudokuStructure obj = matrizSudoku[i][j];
+                String value = obj.input.getText();
                 if(value.equals("")){
-                    JSONArray datosSoudoku = ReadJSON(true);
-                    ShowGeneralMassage(null, new String[]{String.format(msjClue, obj.Coordinate.x+1 , obj.Coordinate.y+1, datosSoudoku.getJSONArray(i).getInt(j) ),msjClueTitle}, JOptionPane.INFORMATION_MESSAGE);
+                    JSONArray datosSoudoku = readJSON(true);
+                    showGeneralMassage(null, new String[]{String.format(msjClue, obj.coordinate.x+1 , obj.coordinate.y+1, datosSoudoku.getJSONArray(i).getInt(j) ),msjClueTitle}, JOptionPane.INFORMATION_MESSAGE);
                     given = true;
                 }
             }
         }
     }
     
-    public static void AddHistory(JTextArea textA,String msj) {
+    public static void addHistory(JTextArea textA,String msj) {
         if(!msj.equals(""))
             textA.append(msj + "\n");
         else
@@ -229,11 +230,15 @@ public class Utilities {
     }
    
     
-    protected static void ShowErrorMassage(JRootPane rootPane, SudokuStructure st, String[] msj, Point location, int type) {
-        JOptionPane.showMessageDialog(rootPane, String.format(msj[0], st.Input.getText(), st.Coordinate.x+1, st.Coordinate.y+1, location.x, location.y), msj[1],type);
+    public static void showEndingMassage(JRootPane rootPane) {
+        JOptionPane.showMessageDialog(rootPane, msjEnding, "Resultado",JOptionPane.INFORMATION_MESSAGE);
     }
     
-    protected static void ShowGeneralMassage(JRootPane rootPane, String[] msj, int type) {
+    protected static void showErrorMassage(JRootPane rootPane, SudokuStructure st, String[] msj, Point location, int type) {
+        JOptionPane.showMessageDialog(rootPane, String.format(msj[0], st.input.getText(), st.coordinate.x+1, st.coordinate.y+1, location.x, location.y), msj[1],type);
+    }
+    
+    protected static void showGeneralMassage(JRootPane rootPane, String[] msj, int type) {
         JOptionPane.showMessageDialog(rootPane, msj[0] , msj[1],type);
     }
 }

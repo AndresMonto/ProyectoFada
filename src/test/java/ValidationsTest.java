@@ -5,6 +5,9 @@
 
 import Classes.Validations;
 import classes.Utilities;
+import static classes.Utilities.getBuffered;
+import java.io.BufferedReader;
+import java.io.FileReader;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.BeforeEach;
@@ -28,10 +31,14 @@ public class ValidationsTest {
     @DisplayName("Hola soy un test1")
     @Test
     public void test1(){
-        Assertions.assertEquals(Short.MAX_VALUE, Short.MAX_VALUE);
-        Assertions.assertNotEquals(Short.MAX_VALUE, Short.MAX_VALUE -1);
-        Assertions.assertTrue(true);
+        try {
+//            String url = "src\\main\\java\\Resource\\data.json";
+//            Assertions.assertSame(getBuffered(url), new BufferedReader(new FileReader(url)));
+//            Assertions.assertNotEquals(Short.MAX_VALUE, Short.MAX_VALUE -1);
+//            Assertions.assertFalse(false);
+                
+        } catch (Exception e) {
+        }
+        
     }
-    
-    
 }
