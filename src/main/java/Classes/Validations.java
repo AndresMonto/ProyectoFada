@@ -42,9 +42,9 @@ public class Validations extends Utilities{
     private static boolean validColumn(SudokuStructure st, JRootPane rootPane) {
         boolean result = true;
         int column = st.coordinate.y;
-        for (int i = 0; i < matrizSudoku.length; i++) {
+        for (int i = 0; i < matrixSudoku.length; i++) {
             if(i != st.coordinate.x && !st.input.getText().equals("")){
-                if(st.input.getText().equals(matrizSudoku[i][column].input.getText())){
+                if(st.input.getText().equals(matrixSudoku[i][column].input.getText())){
                     showErrorMassage(rootPane,st, new String[]{msjError,msjErrorTitle}, new Point(i+1, column+1), JOptionPane.WARNING_MESSAGE);
                     result = false;
                 }
@@ -56,9 +56,9 @@ public class Validations extends Utilities{
     private static boolean validRow(SudokuStructure st, JRootPane rootPane) {
         boolean result = true;
         int row = st.coordinate.x;
-        for (int j = 0; j < matrizSudoku[0].length; j++) {
+        for (int j = 0; j < matrixSudoku[0].length; j++) {
             if(j != st.coordinate.y && !st.input.getText().equals("")){
-                if(st.input.getText().equals(matrizSudoku[row][j].input.getText())){
+                if(st.input.getText().equals(matrixSudoku[row][j].input.getText())){
                     showErrorMassage(rootPane,st, new String[]{msjError,msjErrorTitle}, new Point(row+1, j+1), JOptionPane.WARNING_MESSAGE);
                     result = false;
                 }
@@ -90,7 +90,7 @@ public class Validations extends Utilities{
         for (int i = minimo_fila; i <= maximo_fila; i++) {
             for (int j = minimo_columna; j <= maximo_columna; j++) {
                 if (i != st.coordinate.x && j != st.coordinate.y && !valor.equals("")) {
-                    boolean search = matrizSudoku[i][j].input.getText().equals(valor); 
+                    boolean search = matrixSudoku[i][j].input.getText().equals(valor); 
                     if (search){
                         showErrorMassage(rootPane,st, new String[]{msjError,msjErrorTitle}, new Point(i+1, j+1), JOptionPane.WARNING_MESSAGE);
                         if(result)
@@ -108,13 +108,13 @@ public class Validations extends Utilities{
         boolean result = true;
         boolean error = false;
         
-        for (int i = 0; i < matrizSudoku.length; i++) {
-            for (int j = 0; j < matrizSudoku[0].length; j++) {
-                if(!matrizSudoku[i][j].defaultValue)
-                    matrizSudoku[i][j].input.setForeground(new java.awt.Color(0, 163, 0));
-                boolean valid = validTable(matrizSudoku[i][j], rootPane);
+        for (int i = 0; i < matrixSudoku.length; i++) {
+            for (int j = 0; j < matrixSudoku[0].length; j++) {
+                if(!matrixSudoku[i][j].defaultValue)
+                    matrixSudoku[i][j].input.setForeground(new java.awt.Color(0, 163, 0));
+                boolean valid = validTable(matrixSudoku[i][j], rootPane);
 
-                if(!valid || (valid && matrizSudoku[i][j].input.getText().equals(""))){
+                if(!valid || (valid && matrixSudoku[i][j].input.getText().equals(""))){
                     if(result){
                         result = !result;
                     }                    
