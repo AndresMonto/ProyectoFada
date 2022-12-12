@@ -6,6 +6,7 @@ package Classes;
 
 import Classes.SudokuStructure;
 import Classes.Utilities;
+import Views.MainPanel;
 import java.awt.Color;
 import java.awt.Point;
 import javax.swing.JOptionPane;
@@ -27,10 +28,10 @@ public class Validations extends Utilities{
     private final static String msjPartialSuccess = "Sin errores ;)";
     
     
-    public static boolean validTable(SudokuStructure st, JRootPane rootPane) {        
-        boolean c = validColumn(st, rootPane);
-        boolean r = validRow(st, rootPane);
-        boolean m = validSubMatrix(st, rootPane);
+    public static boolean validTable(SudokuStructure st, MainPanel mPanel, boolean addScore) {        
+        boolean c = validColumn(st, mPanel, addScore);
+        boolean r = validRow(st, mPanel, addScore);
+        boolean m = validSubMatrix(st, mPanel, addScore);
         boolean result = (c && r && m);
         if(!result){
             if(!st.defaultValue)
@@ -39,28 +40,48 @@ public class Validations extends Utilities{
         return result;
     }
     
-    private static boolean validColumn(SudokuStructure st, JRootPane rootPane) {
+    private static boolean validColumn(SudokuStructure st, MainPanel mPanel, boolean addScore) {
         boolean result = true;
         int column = st.coordinate.y;
+        int count = 0;
         for (int i = 0; i < matrixSudoku.length; i++) {
+            String value = matrixSudoku[i][column].input.getText();
             if(i != st.coordinate.x && !st.input.getText().equals("")){
                 if(st.input.getText().equals(matrixSudoku[i][column].input.getText())){
-                    showErrorMassage(rootPane,st, new String[]{msjError,msjErrorTitle}, new Point(i+1, column+1), JOptionPane.WARNING_MESSAGE);
+                    showErrorMassage(mPanel.publicRootPane,st, new String[]{msjError,msjErrorTitle}, new Point(i+1, column+1), JOptionPane.WARNING_MESSAGE);
                     result = false;
                 }
             }
+            if(addScore){
+                if(result && !matrixSudoku[i][column].input.getText().equals("")){
+                    count++;
+                }
+                if(count == 9){
+                    ManageScore(mPanel, 5);
+                }
+            }
+            
         }
         return result;
     }
     
-    private static boolean validRow(SudokuStructure st, JRootPane rootPane) {
+    private static boolean validRow(SudokuStructure st, MainPanel mPanel, boolean addScore) {
         boolean result = true;
         int row = st.coordinate.x;
+        int count = 0;
         for (int j = 0; j < matrixSudoku[0].length; j++) {
             if(j != st.coordinate.y && !st.input.getText().equals("")){
                 if(st.input.getText().equals(matrixSudoku[row][j].input.getText())){
-                    showErrorMassage(rootPane,st, new String[]{msjError,msjErrorTitle}, new Point(row+1, j+1), JOptionPane.WARNING_MESSAGE);
+                    showErrorMassage(mPanel.publicRootPane,st, new String[]{msjError,msjErrorTitle}, new Point(row+1, j+1), JOptionPane.WARNING_MESSAGE);
                     result = false;
+                }
+            }
+            if(addScore){
+                if(result && !matrixSudoku[row][j].input.getText().equals("")){
+                    count++;
+                }
+                if(count == 9){
+                    ManageScore(mPanel, 5);
                 }
             }
         }
@@ -68,7 +89,7 @@ public class Validations extends Utilities{
     }
     
     
-    private static boolean validSubMatrix(SudokuStructure st, JRootPane rootPane) {
+    private static boolean validSubMatrix(SudokuStructure st, MainPanel mPanel, boolean addScore) {
         String valor = st.input.getText();
         
         int minimo_fila = st.coordinate.x;
@@ -86,16 +107,26 @@ public class Validations extends Utilities{
         
         minimo_columna -= mod;
         maximo_columna += (mod == 0) ? 2 : (mod == 1) ? mod : 0;
+        
+        int count = 0;
 
         for (int i = minimo_fila; i <= maximo_fila; i++) {
             for (int j = minimo_columna; j <= maximo_columna; j++) {
                 if (i != st.coordinate.x && j != st.coordinate.y && !valor.equals("")) {
                     boolean search = matrixSudoku[i][j].input.getText().equals(valor); 
                     if (search){
-                        showErrorMassage(rootPane,st, new String[]{msjError,msjErrorTitle}, new Point(i+1, j+1), JOptionPane.WARNING_MESSAGE);
+                        showErrorMassage(mPanel.publicRootPane,st, new String[]{msjError,msjErrorTitle}, new Point(i+1, j+1), JOptionPane.WARNING_MESSAGE);
                         if(result)
                             result = false;
                         break;
+                    }
+                }
+                if(addScore){
+                    if(result && !matrixSudoku[i][j].input.getText().equals("")){
+                        count++;
+                    }
+                    if(count == 9){
+                        ManageScore(mPanel, 5);
                     }
                 }
             }
@@ -103,7 +134,7 @@ public class Validations extends Utilities{
         return result;
     }
     
-    public static void validGeneral(JRootPane rootPane) {                                         
+    public static void validGeneral(MainPanel mPanel, boolean addScore) {                                         
 
         boolean result = true;
         boolean error = false;
@@ -112,7 +143,7 @@ public class Validations extends Utilities{
             for (int j = 0; j < matrixSudoku[0].length; j++) {
                 if(!matrixSudoku[i][j].defaultValue)
                     matrixSudoku[i][j].input.setForeground(new java.awt.Color(0, 163, 0));
-                boolean valid = validTable(matrixSudoku[i][j], rootPane);
+                boolean valid = validTable(matrixSudoku[i][j], mPanel, addScore);
 
                 if(!valid || (valid && matrixSudoku[i][j].input.getText().equals(""))){
                     if(result){
@@ -127,9 +158,9 @@ public class Validations extends Utilities{
         }
         
         if(result){
-            showGeneralMassage(rootPane,new String[]{msjSuccess, msjSuccessTitle}, JOptionPane.INFORMATION_MESSAGE); 
+            showGeneralMassage(mPanel.publicRootPane,new String[]{msjSuccess, msjSuccessTitle}, JOptionPane.INFORMATION_MESSAGE); 
         }else if(!error){
-            showGeneralMassage(rootPane,new String[]{msjPartialSuccess, msjSuccessTitle}, JOptionPane.INFORMATION_MESSAGE); 
+            showGeneralMassage(mPanel.publicRootPane,new String[]{msjPartialSuccess, msjSuccessTitle}, JOptionPane.INFORMATION_MESSAGE); 
         }
     }
     

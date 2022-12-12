@@ -4,6 +4,7 @@
  */
 package Classes;
 
+import Views.MainPanel;
 import java.awt.Color;
 import java.awt.Point;
 import java.io.BufferedReader;
@@ -12,8 +13,8 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 import javax.swing.JButton;
+import javax.swing.JLabel;
 import javax.swing.JOptionPane;
-import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
@@ -39,23 +40,64 @@ public class Utilities {
     private final static String msjHistory = "Valor %d ubicado en la fila %d y en la columna %d";
     private final static String msjClueTitle = "Ahí le va un consejo ;)";
     private final static String msjClue = "En la fila %d y en la columna %d podrías ingresar el valor %s";
-    private final static String msjEnding = "Puntaje: 1 \nTiempo: 1";
+    private final static String msjEnding = "Jugador/a; %s \nPuntaje; %d \n%s";
     
     public static String playerName = "";
+    public static int playerScore = 0;
     
-    private static Runnable runnable = new Runnable() {
+    public static int seconds = 0;
+    public static int minutes = 0;
+    public static int hours = 0;
+    
+    private static String timeString = "";
+    
+    private static Runnable runnable;
+    private static Thread thread; 
+    
+    public static void createThread(MainPanel mPanel){
+        
+        runnable = new Runnable() {
         @Override
-        public void run() {
-          while (true) {
-            try {
-              Thread.sleep(1000);
-              System.out.println("Me imprimo cada segundo");
-            } catch (InterruptedException e) {
-              e.printStackTrace();
+            public void run() {
+              
+              playerScore = 0;
+              seconds = 0;
+              minutes = 0;
+              hours = 0;
+              
+              while (true) {
+                try {
+                  seconds++;
+                  if (seconds % 60 == 0 && seconds != 0){
+                      seconds = 0;
+                      minutes++;
+                      
+                      if(minutes % 60 == 0 && minutes != 0){
+                        minutes = 0;
+                        hours++;
+                      }
+                  }
+                  
+                  timeString = String.format("Tiempo; %d : %d : %d",hours, minutes, seconds);
+                  mPanel.PlayerTime.setText(timeString);
+                  mPanel.PlayerScore.setText(String.format("Puntaje; %d",playerScore));
+                  Thread.sleep(1000);
+                } catch (InterruptedException e) {
+                  e.printStackTrace();
+                }
+              }
             }
-          }
-        }
-    };
+        };
+        
+        thread = new Thread(runnable);
+        thread.start();
+    }
+    
+    
+    public static void ManageScore(MainPanel mPanel, int score){
+        playerScore += score;
+        
+    }
     
     public static BufferedReader getBuffered(String link) {
 
@@ -97,39 +139,37 @@ public class Utilities {
     }
     
     
-    public static void chargeMatrix(JPanel jPanel2, JTextArea textA, JRootPane rootPane, int table, boolean resolved) {
-        Thread hilo = new Thread(runnable);
-        hilo.start();
-        table = table;
+    public static void chargeMatrix(MainPanel mPanel, int table, boolean resolved) {
+        
         JSONArray datosSoudoku =  readJSON(resolved);
         
         for (int i = 0; i < datosSoudoku.length(); i++) {
             for (int j = 0; j < datosSoudoku.getJSONArray(0).length(); j++) {
                 JTextField input = createTextField(datosSoudoku, i, j);
-                jPanel2.add(input); 
+                mPanel.jPanel2.add(input); 
                 matrixSudoku[i][j] = new SudokuStructure(input, input.getText(), new Point(i, j), !input.getText().equals(""));
-                addActionToTextField(matrixSudoku[i][j], textA, rootPane);
+                addActionToTextField(matrixSudoku[i][j], mPanel);
             }
         }
     }
     
-    private static void addActionToTextField(SudokuStructure st, JTextArea textA, JRootPane rootPane){
+    private static void addActionToTextField(SudokuStructure st, MainPanel mPanel){
         st.input.addKeyListener(new java.awt.event.KeyAdapter() {
             public void keyReleased(java.awt.event.KeyEvent evt) {
-                jTextKeyReleased(st, textA, rootPane);
+                jTextKeyReleased(st, mPanel);
             }
         });
     }
     
-    private static void jTextKeyReleased(SudokuStructure st, JTextArea textA, JRootPane rootPane) {
+    private static void jTextKeyReleased(SudokuStructure st, MainPanel mPanel) {
        try {
            int value = Integer.parseInt( st.input.getText());
            if(value >= 1 && value <= 9){
                if(!st.defaultValue)
                    st.input.setForeground(new java.awt.Color(0, 163, 0));
-               Validations.validTable(st, rootPane);
+               Validations.validTable(st, mPanel, true);
                addPlayToMoves(st);
-               addHistory(textA, String.format(msjHistory, value, st.coordinate.x+1, st.coordinate.y+1));
+               addHistory(mPanel.jTextArea1, String.format(msjHistory, value, st.coordinate.x+1, st.coordinate.y+1));
            }else{
                st.input.setText("");
            }
@@ -144,6 +184,14 @@ public class Utilities {
         if(moves.size() > 1)
             play++;
         matrixSudoku[st.coordinate.x][st.coordinate.y].prevValue = st.input.getText();
+    }
+    
+    public static void endPlay(JRootPane rootPane) {
+        thread.stop();
+        showEndingMassage(rootPane);
+        thread = new Thread(runnable);
+        thread.start();
+        resetValues(false);        
     }
     
     public static void moveForward() {
@@ -244,10 +292,9 @@ public class Utilities {
         else
             textA.setText(msj);   
     }
-   
     
-    public static void showEndingMassage(JRootPane rootPane) {
-        JOptionPane.showMessageDialog(rootPane, msjEnding, "Resultado",JOptionPane.INFORMATION_MESSAGE);
+    private static void showEndingMassage(JRootPane rootPane) {
+        JOptionPane.showMessageDialog(rootPane, String.format(msjEnding, playerName, playerScore, timeString), "Resultado",JOptionPane.INFORMATION_MESSAGE);
     }
     
     protected static void showErrorMassage(JRootPane rootPane, SudokuStructure st, String[] msj, Point location, int type) {
