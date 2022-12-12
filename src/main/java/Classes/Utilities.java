@@ -2,10 +2,8 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package classes;
+package Classes;
 
-import Classes.Move;
-import Classes.Validations;
 import java.awt.Color;
 import java.awt.Point;
 import java.io.BufferedReader;

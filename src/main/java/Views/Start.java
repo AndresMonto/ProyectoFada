@@ -2,7 +2,7 @@
 package Views;
 
 import javax.swing.JOptionPane;
-import classes.Utilities;
+import Classes.Utilities;
 
 public class Start extends javax.swing.JFrame {
 

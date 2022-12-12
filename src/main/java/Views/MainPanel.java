@@ -5,13 +5,13 @@
 package Views;
 
 import Classes.Validations;
-import static classes.Utilities.chargeMatrix;
-import static classes.Utilities.moveForward;
-import static classes.Utilities.moveBack;
-import static classes.Utilities.resetValues;
-import static classes.Utilities.getClue;
-import static classes.Utilities.addHistory;
-import static classes.Utilities.showEndingMassage;
+import static Classes.Utilities.chargeMatrix;
+import static Classes.Utilities.moveForward;
+import static Classes.Utilities.moveBack;
+import static Classes.Utilities.resetValues;
+import static Classes.Utilities.getClue;
+import static Classes.Utilities.addHistory;
+import static Classes.Utilities.showEndingMassage;
 
 /**
  *

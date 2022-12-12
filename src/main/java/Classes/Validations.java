@@ -4,8 +4,8 @@
  */
 package Classes;
 
-import classes.SudokuStructure;
-import classes.Utilities;
+import Classes.SudokuStructure;
+import Classes.Utilities;
 import java.awt.Color;
 import java.awt.Point;
 import javax.swing.JOptionPane;
