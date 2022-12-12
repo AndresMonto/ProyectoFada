@@ -43,6 +43,20 @@ public class Utilities {
     private final static String msjClue = "En la fila %d y en la columna %d podrías ingresar el valor %s";
     private final static String msjEnding = "Puntaje: 1 \nTiempo: 1";
     
+    private static Runnable runnable = new Runnable() {
+        @Override
+        public void run() {
+          while (true) {
+            try {
+              Thread.sleep(1000);
+              System.out.println("Me imprimo cada segundo");
+            } catch (InterruptedException e) {
+              e.printStackTrace();
+            }
+          }
+        }
+    };
+    
     public static BufferedReader getBuffered(String link) {
 
         FileReader lector = null;
@@ -84,6 +98,8 @@ public class Utilities {
     
     
     public static void chargeMatrix(JPanel jPanel2, JTextArea textA, JRootPane rootPane, int table, boolean resolved) {
+        Thread hilo = new Thread(runnable);
+        hilo.start();
         table = table;
         JSONArray datosSoudoku =  readJSON(resolved);
         

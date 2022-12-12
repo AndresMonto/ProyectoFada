@@ -5,7 +5,6 @@ import javax.swing.JOptionPane;
 
 public class Start extends javax.swing.JFrame {
 
-    MainPanel table = new MainPanel();
     public Start() {
         initComponents();
     }
@@ -150,12 +149,13 @@ public class Start extends javax.swing.JFrame {
     }//GEN-LAST:event_cancelActionPerformed
 
     private void loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginActionPerformed
-        if(!nombre.getText().isEmpty()){
+        if(!nombre.getText().trim().isEmpty()){
             String show = nombre.getText();
-            MainPanel.mostrarNombre.setText("👤 Nombre del jugador/a: "+ show);
             JOptionPane.showMessageDialog(null, "Bienvenido/a " + show);
-            table.setVisible(true);
             this.setVisible(false);
+            MainPanel table = new MainPanel();
+            table.PlayerName.setText("👤 Nombre del jugador/a: "+ show);
+            table.setVisible(true);
         }else{
             JOptionPane.showMessageDialog(this, "Ingrese su nombre");
         }
