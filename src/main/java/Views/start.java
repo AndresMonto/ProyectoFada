@@ -153,6 +153,7 @@ public class start extends javax.swing.JFrame {
             MainPanel.mostrarNombre.setText("Nombre del jugador/a: "+ show);
             JOptionPane.showMessageDialog(null, "Bienvenido/a " + show);
             table.setVisible(true);
+            this.setVisible(false);
         }else{
             JOptionPane.showMessageDialog(this, "Ingrese su nombre");
         }
