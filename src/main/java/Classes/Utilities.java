@@ -54,6 +54,8 @@ public class Utilities {
     private static Runnable runnable;
     private static Thread thread; 
     
+    private static String currentTable = "data1.txt"; 
+    
     public static void createThread(MainPanel mPanel){
         
         runnable = new Runnable() {
@@ -117,31 +119,57 @@ public class Utilities {
         return br;
     }
     
-    private static JSONArray readJSON(boolean resolved) {
-        String cadenaJson = "";
+    private static JSONArray readJSON() {
+        String cadenaJson = "{\"data\":[";
     
         try{
-            String ruta = "src\\main\\java\\Resource\\data.json";
+            String ruta = String.format("src\\main\\java\\Resource\\%s",  currentTable);
             BufferedReader br = getBuffered(ruta);
             String linea = br.readLine();
-            int contador = 0;
+//            while (linea != null) {
+//                cadenaJson += linea;
+//                linea = br.readLine();
+//            }
             while (linea != null) {
-                cadenaJson += linea;
-                contador++;
+                cadenaJson += "[";
+                for (int i = 0; i < linea.length(); i++) {
+                    char value = linea.charAt(i);
+                    
+                    switch (value) {
+                        case '-':
+                            cadenaJson += "0";
+                            break;
+                        case ';':
+                            break;
+                        default:
+                            cadenaJson += value;
+                            break;
+                    }
+                    
+                    if(i < linea.length() - 2){
+                        cadenaJson += ",";
+                    }
+                }
+                cadenaJson += "]";
                 linea = br.readLine();
+                if(linea != null){
+                    cadenaJson += ",";
+                }
             }
         } catch (IOException e) {}
         
+        cadenaJson += "]}";
+        
         JSONObject objetoJson = new JSONObject(cadenaJson);
         JSONArray datosSoudoku = objetoJson.getJSONArray("data");
-        datosSoudoku = datosSoudoku.getJSONArray(table).getJSONArray(resolved ? 1 : 0 );
+        //datosSoudoku = datosSoudoku.getJSONArray(table).getJSONArray(resolved ? 1 : 0 );
         return datosSoudoku;
     }
     
     
-    public static void chargeMatrix(MainPanel mPanel, int table, boolean resolved) {
+    public static void chargeMatrix(MainPanel mPanel) {
         
-        JSONArray datosSoudoku =  readJSON(resolved);
+        JSONArray datosSoudoku =  readJSON();
         
         for (int i = 0; i < datosSoudoku.length(); i++) {
             for (int j = 0; j < datosSoudoku.getJSONArray(0).length(); j++) {
@@ -191,7 +219,7 @@ public class Utilities {
         showEndingMassage(rootPane);
         thread = new Thread(runnable);
         thread.start();
-        resetValues(false);        
+        resetValues();        
     }
     
     public static void moveForward() {
@@ -236,9 +264,9 @@ public class Utilities {
         return input;
     }
     
-    public static void resetValues(boolean resolved) {
+    public static void resetValues() {
 
-        JSONArray datosSoudoku =  readJSON(resolved);
+        JSONArray datosSoudoku =  readJSON();
         
         for (int i = 0; i < datosSoudoku.length(); i++) {
             for (int j = 0; j < datosSoudoku.getJSONArray(0).length(); j++) {
@@ -258,32 +286,32 @@ public class Utilities {
 
     }
     
-    public static void resetValues(JButton jb) {
-        table = table == 0 ? 1 : 0;
-        jb.setText("🐍 Cambiar de Tablero " + (table == 0 ? "Difícil" : "Fácil"));
-        resetValues(false);
+    public static void changeTable(JRootPane rootPane) {
+        currentTable = "data2.txt";
+        endPlay(rootPane);
+        resetValues();
     }
     
-    public static void resetValues() {
-        if(moves.size() > 0){
-            Move m = moves.get(play);
-            matrixSudoku[m.coordenate.x][m.coordenate.y].input.setText(m.value);
-        }
-    }
+//    public static void resetValues() {
+//        if(moves.size() > 0){
+//            Move m = moves.get(play);
+//            matrixSudoku[m.coordenate.x][m.coordenate.y].input.setText(m.value);
+//        }
+//    }
     
     public static void getClue() {
-        boolean given = false;
-        for (int i = 0; i < matrixSudoku.length && !given; i++) {
-            for (int j = 0; j < matrixSudoku[0].length && !given; j++) {
-                SudokuStructure obj = matrixSudoku[i][j];
-                String value = obj.input.getText();
-                if(value.equals("")){
-                    JSONArray datosSoudoku = readJSON(true);
-                    showGeneralMassage(null, new String[]{String.format(msjClue, obj.coordinate.x+1 , obj.coordinate.y+1, datosSoudoku.getJSONArray(i).getInt(j) ),msjClueTitle}, JOptionPane.INFORMATION_MESSAGE);
-                    given = true;
-                }
-            }
-        }
+//        boolean given = false;
+//        for (int i = 0; i < matrixSudoku.length && !given; i++) {
+//            for (int j = 0; j < matrixSudoku[0].length && !given; j++) {
+//                SudokuStructure obj = matrixSudoku[i][j];
+//                String value = obj.input.getText();
+//                if(value.equals("")){
+//                    JSONArray datosSoudoku = readJSON();
+//                    showGeneralMassage(null, new String[]{String.format(msjClue, obj.coordinate.x+1 , obj.coordinate.y+1, datosSoudoku.getJSONArray(i).getInt(j) ),msjClueTitle}, JOptionPane.INFORMATION_MESSAGE);
+//                    given = true;
+//                }
+//            }
+//        }
     }
     
     public static void addHistory(JTextArea textA,String msj) {

@@ -12,6 +12,7 @@ import static Classes.Utilities.resetValues;
 import static Classes.Utilities.getClue;
 import static Classes.Utilities.addHistory;
 import static Classes.Utilities.endPlay;
+import static Classes.Utilities.changeTable;
 import javax.swing.JRootPane;
 import static Classes.Utilities.createThread;
 
@@ -30,7 +31,7 @@ public class MainPanel extends javax.swing.JFrame {
     public MainPanel() {
         initComponents();
         publicRootPane = this.rootPane;
-        chargeMatrix(this, 0, false);
+        chargeMatrix(this);
         createThread(this);
     }
     /**
@@ -252,7 +253,7 @@ public class MainPanel extends javax.swing.JFrame {
         jPanel5.setBackground(new java.awt.Color(0, 191, 255));
         jPanel5.setBorder(new javax.swing.border.SoftBevelBorder(javax.swing.border.BevelBorder.RAISED));
 
-        jButton7.setText("🐍 Cambiar de Tablero Difícil");
+        jButton7.setText("🐍 Cambiar de Tablero");
         jButton7.addActionListener(new java.awt.event.ActionListener() {
             public void actionPerformed(java.awt.event.ActionEvent evt) {
                 jButton7ActionPerformed(evt);
@@ -434,7 +435,7 @@ public class MainPanel extends javax.swing.JFrame {
     private void jButton5ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton5ActionPerformed
         // TODO add your handling code here:
         addHistory(jTextArea1, "Limpieza de Tablero");
-        resetValues(false);
+        resetValues();
     }//GEN-LAST:event_jButton5ActionPerformed
 
     private void jButton8ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton8ActionPerformed
@@ -445,7 +446,7 @@ public class MainPanel extends javax.swing.JFrame {
     private void jButton7ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton7ActionPerformed
         // TODO add your handling code here:
         addHistory(jTextArea1, "Cambio de Tablero");
-        resetValues(jButton7);
+        changeTable(rootPane);
     }//GEN-LAST:event_jButton7ActionPerformed
 
     private void jButton9ActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_jButton9ActionPerformed
