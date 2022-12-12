@@ -2,6 +2,7 @@
 package Views;
 
 import javax.swing.JOptionPane;
+import classes.Utilities;
 
 public class Start extends javax.swing.JFrame {
 
@@ -150,11 +151,11 @@ public class Start extends javax.swing.JFrame {
 
     private void loginActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_loginActionPerformed
         if(!nombre.getText().trim().isEmpty()){
-            String show = nombre.getText();
-            JOptionPane.showMessageDialog(null, "Bienvenido/a " + show);
+            Utilities.playerName =  nombre.getText();
+            JOptionPane.showMessageDialog(null, "Bienvenido/a " + Utilities.playerName);
             this.setVisible(false);
             MainPanel table = new MainPanel();
-            table.PlayerName.setText("👤 Nombre del jugador/a: "+ show);
+            table.PlayerName.setText("👤 Nombre del jugador/a: "+ Utilities.playerName);
             table.setVisible(true);
         }else{
             JOptionPane.showMessageDialog(this, "Ingrese su nombre");

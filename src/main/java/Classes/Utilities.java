@@ -43,6 +43,8 @@ public class Utilities {
     private final static String msjClue = "En la fila %d y en la columna %d podrías ingresar el valor %s";
     private final static String msjEnding = "Puntaje: 1 \nTiempo: 1";
     
+    public static String playerName = "";
+    
     private static Runnable runnable = new Runnable() {
         @Override
         public void run() {
