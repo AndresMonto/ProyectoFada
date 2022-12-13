@@ -4,13 +4,10 @@
  */
 package Classes;
 
-import Classes.SudokuStructure;
-import Classes.Utilities;
 import Views.MainPanel;
 import java.awt.Color;
 import java.awt.Point;
 import javax.swing.JOptionPane;
-import javax.swing.JRootPane;
 
 /**
  *

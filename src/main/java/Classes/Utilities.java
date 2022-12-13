@@ -12,8 +12,6 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
-import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JRootPane;
 import javax.swing.JTextArea;
@@ -54,7 +52,7 @@ public class Utilities {
     private static Runnable runnable;
     private static Thread thread; 
     
-    private static String currentTable = "data1.txt"; 
+    private static int currentTable = 1; 
     
     public static void createThread(MainPanel mPanel){
         
@@ -123,7 +121,7 @@ public class Utilities {
         String cadenaJson = "{\"data\":[";
     
         try{
-            String ruta = String.format("src\\main\\java\\Resource\\%s",  currentTable);
+            String ruta = String.format("src\\main\\java\\Resource\\data%d.txt",  currentTable);
             BufferedReader br = getBuffered(ruta);
             String linea = br.readLine();
 //            while (linea != null) {
@@ -287,7 +285,11 @@ public class Utilities {
     }
     
     public static void changeTable(JRootPane rootPane) {
-        currentTable = "data2.txt";
+        if(currentTable == 6){
+            currentTable = 1;
+        }else{
+            currentTable++;
+        }
         endPlay(rootPane);
         resetValues();
     }
