@@ -33,7 +33,6 @@ public class Utilities {
     private static Move moveBack = null;
     private static Move moveNext = null;
 
-
     //private static int play = -1;
     
     private final static String msjHistory = "Valor %d ubicado en la fila %d y en la columna %d";
@@ -317,7 +316,7 @@ public class Utilities {
 //    }
     
     public static void getClue() {
-//        boolean given = false;
+        boolean given = false;
 //        for (int i = 0; i < matrixSudoku.length && !given; i++) {
 //            for (int j = 0; j < matrixSudoku[0].length && !given; j++) {
 //                SudokuStructure obj = matrixSudoku[i][j];
@@ -329,6 +328,70 @@ public class Utilities {
 //                }
 //            }
 //        }
+        
+        for (int row = 0; row < matrixSudoku.length && !given; row++) {
+            for (int column = 0; column < matrixSudoku[0].length && !given; column++) {
+                SudokuStructure obj = matrixSudoku[row][column];
+                String value = obj.input.getText();
+                if(value.equals("")){
+                    
+                    ArrayList<String> values = new ArrayList<>();
+                    String val = "";
+                    
+                    for (int k = 0; k < matrixSudoku.length; k++) {
+                        val = matrixSudoku[row][k].input.getText();
+                        if(!val.equals("") && !values.contains(val)){
+                            values.add(val);
+                        }
+                    }
+                    
+                    for (int l = 0; l < matrixSudoku[0].length; l++) {
+                        val = matrixSudoku[l][column].input.getText();
+                        if(!val.equals("") && !values.contains(val)){
+                            values.add(val);
+                        }
+                    }
+                    
+                    int minimo_fila = row;
+                    int maximo_fila = row;
+                    int minimo_columna = column;
+                    int maximo_columna = column;
+
+                    int mod = (row) % 3;
+
+                    minimo_fila -= mod;
+                    maximo_fila += (mod == 0) ? 2 : (mod == 1) ? mod : 0;
+
+                    mod = (column) % 3;
+
+                    minimo_columna -= mod;
+                    maximo_columna += (mod == 0) ? 2 : (mod == 1) ? mod : 0;
+                    
+                    for (int m = minimo_fila; m <= maximo_fila; m++) {
+                        for (int n = minimo_columna; n <= maximo_columna; n++) {
+                            val = matrixSudoku[m][n].input.getText();
+                            if(!val.equals("") && !values.contains(val)){
+                                values.add(val);
+                            }
+                        }
+                    }
+                    
+                    boolean find = false;
+                    
+                    for (int i = 1; i <= matrixSudoku.length && !find; i++) {
+                        if(!values.contains(String.valueOf(i))){
+                            val = String.valueOf(i);
+                            find = true;
+                        }
+                    }
+                    
+                    if(find){
+                        showGeneralMassage(null, new String[]{String.format(msjClue, obj.coordinate.x+1 , obj.coordinate.y+1,  val),msjClueTitle}, JOptionPane.INFORMATION_MESSAGE);
+                        given = true;
+                    }
+                }
+            }
+        }
     }
     
     public static void addHistory(JTextArea textA,String msj) {
