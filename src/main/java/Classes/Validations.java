@@ -38,13 +38,13 @@ public class Validations extends Utilities{
         
         if(result){
             if(countRow == 9){
-                ManageScore(mPanel, 5);
+                manageScore(mPanel, 5);
             }
             if(countColumn == 9){
-                ManageScore(mPanel, 5);
+                manageScore(mPanel, 5);
             }
             if(countSubMatrix == 9){
-                ManageScore(mPanel, 5);
+                manageScore(mPanel, 5);
             }
         }else{
             if(!st.defaultValue)

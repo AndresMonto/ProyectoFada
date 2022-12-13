@@ -41,11 +41,11 @@ public class Utilities {
     private final static String msjEnding = "Jugador/a; %s \nPuntaje; %d \n%s";
     
     public static String playerName = "";
-    public static int playerScore = 0;
+    private static int playerScore = 0;
     
-    public static int seconds = 0;
-    public static int minutes = 0;
-    public static int hours = 0;
+    private static int seconds = 0;
+    private static int minutes = 0;
+    private static int hours = 0;
     
     private static String timeString = "";
     
@@ -94,12 +94,12 @@ public class Utilities {
     }
     
     
-    public static void ManageScore(MainPanel mPanel, int score){
+    public static void manageScore(MainPanel mPanel, int score){
         playerScore += score;
         
     }
     
-    public static BufferedReader getBuffered(String link) {
+    private static BufferedReader getBuffered(String link) {
 
         FileReader lector = null;
         BufferedReader br = null;
