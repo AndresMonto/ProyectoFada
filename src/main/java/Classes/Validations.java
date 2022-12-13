@@ -24,13 +24,29 @@ public class Validations extends Utilities{
     
     private final static String msjPartialSuccess = "Sin errores ;)";
     
+    private static int countRow;
+    private static int countColumn;
+    private static int countSubMatrix;
+    
     
     public static boolean validTable(SudokuStructure st, MainPanel mPanel, boolean addScore) {        
         boolean c = validColumn(st, mPanel, addScore);
         boolean r = validRow(st, mPanel, addScore);
         boolean m = validSubMatrix(st, mPanel, addScore);
         boolean result = (c && r && m);
-        if(!result){
+        
+        
+        if(result){
+            if(countRow == 9){
+                ManageScore(mPanel, 5);
+            }
+            if(countColumn == 9){
+                ManageScore(mPanel, 5);
+            }
+            if(countSubMatrix == 9){
+                ManageScore(mPanel, 5);
+            }
+        }else{
             if(!st.defaultValue)
                 st.input.setForeground(Color.red);
         }
@@ -40,7 +56,7 @@ public class Validations extends Utilities{
     private static boolean validColumn(SudokuStructure st, MainPanel mPanel, boolean addScore) {
         boolean result = true;
         int column = st.coordinate.y;
-        int count = 0;
+        countColumn = 0;
         for (int i = 0; i < matrixSudoku.length; i++) {
             String value = matrixSudoku[i][column].input.getText();
             if(i != st.coordinate.x && !st.input.getText().equals("")){
@@ -51,10 +67,7 @@ public class Validations extends Utilities{
             }
             if(addScore){
                 if(result && !matrixSudoku[i][column].input.getText().equals("")){
-                    count++;
-                }
-                if(count == 9){
-                    ManageScore(mPanel, 5);
+                    countColumn++;
                 }
             }
             
@@ -65,7 +78,7 @@ public class Validations extends Utilities{
     private static boolean validRow(SudokuStructure st, MainPanel mPanel, boolean addScore) {
         boolean result = true;
         int row = st.coordinate.x;
-        int count = 0;
+        countRow = 0;
         for (int j = 0; j < matrixSudoku[0].length; j++) {
             if(j != st.coordinate.y && !st.input.getText().equals("")){
                 if(st.input.getText().equals(matrixSudoku[row][j].input.getText())){
@@ -75,10 +88,7 @@ public class Validations extends Utilities{
             }
             if(addScore){
                 if(result && !matrixSudoku[row][j].input.getText().equals("")){
-                    count++;
-                }
-                if(count == 9){
-                    ManageScore(mPanel, 5);
+                    countRow++;
                 }
             }
         }
@@ -105,7 +115,7 @@ public class Validations extends Utilities{
         minimo_columna -= mod;
         maximo_columna += (mod == 0) ? 2 : (mod == 1) ? mod : 0;
         
-        int count = 0;
+        countSubMatrix = 0;
 
         for (int i = minimo_fila; i <= maximo_fila; i++) {
             for (int j = minimo_columna; j <= maximo_columna; j++) {
@@ -120,10 +130,7 @@ public class Validations extends Utilities{
                 }
                 if(addScore){
                     if(result && !matrixSudoku[i][j].input.getText().equals("")){
-                        count++;
-                    }
-                    if(count == 9){
-                        ManageScore(mPanel, 5);
+                        countSubMatrix++;
                     }
                 }
             }

@@ -30,10 +30,11 @@ public class Utilities {
     private static int change = 0;
     
     protected static SudokuStructure[][]  matrixSudoku = new  SudokuStructure[9][9];
-    private static ArrayList<Move> moves = new ArrayList<>();
+    private static Move moveBack = null;
+    private static Move moveNext = null;
 
-    protected static int play = 0;
-    private static int table = 0;
+
+    //private static int play = -1;
     
     private final static String msjHistory = "Valor %d ubicado en la fila %d y en la columna %d";
     private final static String msjClueTitle = "Ahí le va un consejo ;)";
@@ -206,9 +207,8 @@ public class Utilities {
     }
     
     private static void addPlayToMoves(SudokuStructure st) {
-        moves.add(new Move(st.prevValue, new Point(st.coordinate.x, st.coordinate.y)));
-        if(moves.size() > 1)
-            play++;
+        moveBack = new Move(st.prevValue, new Point(st.coordinate.x, st.coordinate.y));
+        //play++;
         matrixSudoku[st.coordinate.x][st.coordinate.y].prevValue = st.input.getText();
     }
     
@@ -221,13 +221,26 @@ public class Utilities {
     }
     
     public static void moveForward() {
-        play += play < (moves.size()-0) ? 1 : 0;
-        resetValues();
+        //play += play < (moves.size()-1) ? 1 : 0;
+        //resetValuesMoves();
+        
+        if(moveNext != null){
+            moveBack = new Move(matrixSudoku[moveNext.coordenate.x][moveNext.coordenate.y].input.getText(), new Point(moveNext.coordenate.x, moveNext.coordenate.y));
+            matrixSudoku[moveNext.coordenate.x][moveNext.coordenate.y].input.setText(moveNext.value);
+            moveNext =null;
+        }
     }
     
     public static void moveBack() {
-        resetValues();
-        play -= play > 0 ? 1 : 0;
+        
+         if(moveBack != null){
+            moveNext = new Move(matrixSudoku[moveBack.coordenate.x][moveBack.coordenate.y].input.getText(), new Point(moveBack.coordenate.x, moveBack.coordenate.y));
+            matrixSudoku[moveBack.coordenate.x][moveBack.coordenate.y].input.setText(moveBack.value);
+            moveBack =null;
+        }
+        
+        //resetValuesMoves();
+        //play -= play >= 0 ? 1 : 0;
     }
     
     private static JTextField createTextField(JSONArray datosSoudoku, int i, int j) {
@@ -294,11 +307,13 @@ public class Utilities {
         resetValues();
     }
     
-//    public static void resetValues() {
-//        if(moves.size() > 0){
-//            Move m = moves.get(play);
-//            matrixSudoku[m.coordenate.x][m.coordenate.y].input.setText(m.value);
-//        }
+//    public static void resetValuesMoves() {
+////        if(moves.size() > 0 && play >= 0){
+////            Move m = moves.get(play);
+////            matrixSudoku[m.coordenate.x][m.coordenate.y].input.setText(m.value);
+////        }
+//
+//       
 //    }
     
     public static void getClue() {
